@@ -1,5 +1,5 @@
-// ZMIANA: Zmieniliśmy nazwę cache z v1 na v2, aby wymusić aktualizację
-const CACHE_NAME = 'notatnik-treningowy-cache-v2';
+// ZMIANA: Zmieniliśmy nazwę cache z v2 na v3, aby wymusić ostateczną aktualizację
+const CACHE_NAME = 'notatnik-treningowy-cache-v3';
 
 // Lista plików do zapisania w pamięci podręcznej, w tym nowa ikona
 const urlsToCache = [
@@ -8,7 +8,7 @@ const urlsToCache = [
   '/css/style.css',
   '/js/app.js',
   '/manifest.json',
-  '/images/icon.png' // DODANO: Ścieżka do Twojej ikony
+  '/images/icon.png'
 ];
 
 // Usunięcie starych wersji cache podczas aktywacji nowego Service Workera
