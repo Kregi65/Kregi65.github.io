@@ -120,7 +120,6 @@ document.addEventListener('DOMContentLoaded', () => {
     loginBtn.addEventListener('click', () => {
         auth.signInWithPopup(provider)
             .then(() => {
-                // Po udanym logowaniu, przeładuj stronę, aby zapewnić czyste wczytanie danych
                 window.location.reload();
             })
             .catch(error => {
@@ -239,9 +238,6 @@ document.addEventListener('DOMContentLoaded', () => {
             calendarGrid.appendChild(dayCell);
         }
     };
-    
-    // ... (reszta funkcji bez zmian, ale z saveData() zamiast saveWorkouts/saveTemplates)
-    // Poniżej wklejone są wszystkie pozostałe funkcje z poprawnym wywołaniem saveData()
     
     const renderDayView = () => {
         const dateKey = formatDateKey(selectedDate);
