@@ -15,6 +15,16 @@ document.addEventListener('DOMContentLoaded', () => {
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.firestore();
+// WŁĄCZENIE TRYBU OFFLINE
+db.enablePersistence().catch(err => {
+    if (err.code == 'failed-precondition') {
+        // Prawdopodobnie otwartych jest wiele kart
+        console.warn('Persistence failed, probably multiple tabs open');
+    } else if (err.code == 'unimplemented') {
+        // Przeglądarka nie wspiera tej funkcji
+        console.warn('Persistence is not available in this browser');
+    }
+});
     let user = null;
     let userDataRef = null;
 
