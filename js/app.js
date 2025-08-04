@@ -118,10 +118,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- LOGIKA AUTENTYKACJI ---
     const provider = new firebase.auth.GoogleAuthProvider();
     loginBtn.addEventListener('click', () => {
-        auth.signInWithPopup(provider).catch(error => {
-            console.error("Błąd logowania:", error);
-            alert("Logowanie nie powiodło się.");
-        });
+        auth.signInWithPopup(provider)
+            .then(() => {
+                // Po udanym logowaniu, przeładuj stronę, aby zapewnić czyste wczytanie danych
+                window.location.reload();
+            })
+            .catch(error => {
+                console.error("Błąd logowania:", error);
+                alert("Logowanie nie powiodło się.");
+            });
     });
 
     function signOut() {
