@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notatnik Treningowy</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script src="js/app.js" defer></script>
+</head>
+<body class="bg-gray-900 text-white antialiased">
+
+    <div id="app" class="container mx-auto p-4 max-w-4xl">
+
+        <!-- Nagłówek Aplikacji -->
+        <header class="text-center my-6">
+            <h1 class="text-3xl sm:text-4xl font-bold text-cyan-400">Notatnik Treningowy</h1>
+            <p class="text-gray-400 mt-2 text-sm sm:text-base">Zaplanuj swoje ćwiczenia, śledź postępy i zapisuj notatki</p>
+        </header>
+
+        <!-- Widok Kalendarza -->
+        <div id="calendar-view" class="fade-in">
+            <div class="bg-gray-800 rounded-lg shadow-lg p-4 sm:p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <button id="prev-month" class="p-2 rounded-full bg-gray-700 hover:bg-cyan-500 transition-colors duration-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+                    </button>
+                    <h2 id="month-year" class="text-xl sm:text-2xl font-semibold transition-colors duration-200"></h2>
+                    <button id="next-month" class="p-2 rounded-full bg-gray-700 hover:bg-cyan-500 transition-colors duration-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                    </button>
+                </div>
+                
+                <div id="day-headers" class="grid grid-cols-7 gap-1 sm:gap-2 text-center text-xs sm:text-sm font-medium text-gray-400 mb-2">
+                    <div class="day-header p-1 rounded-md transition-colors duration-200" data-day-index="1">Pon</div>
+                    <div class="day-header p-1 rounded-md transition-colors duration-200" data-day-index="2">Wt</div>
+                    <div class="day-header p-1 rounded-md transition-colors duration-200" data-day-index="3">Śr</div>
+                    <div class="day-header p-1 rounded-md transition-colors duration-200" data-day-index="4">Czw</div>
+                    <div class="day-header p-1 rounded-md transition-colors duration-200" data-day-index="5">Pt</div>
+                    <div class="day-header p-1 rounded-md transition-colors duration-200" data-day-index="6">Sob</div>
+                    <div class="day-header p-1 rounded-md transition-colors duration-200" data-day-index="0">Ndz</div>
+                </div>
+                <div id="calendar-grid" class="grid calendar-grid gap-1 sm:gap-2"></div>
+
+                <!-- Pasek akcji dla trybu edycji dni -->
+                <div id="calendar-action-bar" class="hidden mt-4 p-3 bg-gray-700 rounded-lg flex flex-col sm:flex-row justify-between items-center gap-2">
+                    <span class="text-white font-medium text-center text-sm">Tryb edycji: Klikaj dni, aby dodać/usunąć szablon.</span>
+                    <button id="finish-editing-days-btn" class="bg-green-600 hover:bg-green-500 text-white font-bold py-2 px-3 rounded-lg w-full sm:w-auto">Zakończ</button>
+                </div>
+
+                <div class="flex justify-center mt-6">
+                    <button id="toggle-templates-panel-btn" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2 px-4 rounded-lg transition-colors">
+                        Dodaj szablon
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Panel Zarządzania Szablonami (pod kalendarzem) -->
+        <div id="templates-panel" class="hidden bg-gray-800 rounded-lg shadow-lg p-4 sm:p-6 mt-6 fade-in">
+             <div class="p-4 border-b border-gray-700 flex justify-between items-center mb-4">
+                <h2 class="text-xl sm:text-2xl font-bold text-white">Zarządzanie Szablonami</h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h3 class="text-lg sm:text-xl font-semibold mb-4">Twoje Szablony</h3>
+                    <div id="template-list" class="space-y-3"></div>
+                    <div id="template-list-actions" class="mt-4">
+                        <button id="delete-templates-mode-btn" class="w-full bg-red-700 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg transition-colors">
+                            Usuń Szablony
+                        </button>
+                    </div>
+                    <div id="template-delete-bar" class="hidden mt-4 p-3 bg-gray-900 rounded-lg flex flex-col sm:flex-row justify-between items-center gap-2">
+                        <span id="template-selection-counter" class="text-white font-medium">Zaznaczono: 0</span>
+                        <div class="flex gap-2 w-full sm:w-auto">
+                            <button id="confirm-delete-btn" class="bg-red-600 hover:bg-red-500 text-white font-bold py-2 px-3 rounded-lg w-1/2 sm:w-auto">Potwierdź</button>
+                            <button id="cancel-delete-btn" class="bg-gray-500 hover:bg-gray-400 text-white font-bold py-2 px-3 rounded-lg w-1/2 sm:w-auto">Anuluj</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="create-template-column" class="bg-gray-700 p-4 rounded-lg">
+                    <h3 class="text-lg sm:text-xl font-semibold mb-4">Stwórz Nowy Szablon</h3>
+                    <input type="text" id="template-name-input" placeholder="Nazwa szablonu (np. Dzień Nóg)" class="w-full bg-gray-800 border border-gray-600 rounded-md p-2 mb-4 focus:outline-none focus:ring-2 focus:ring-indigo-400">
+                    <div class="space-y-2 mb-4" id="new-template-exercises"></div>
+                    <button id="add-exercise-to-template-btn" class="w-full text-center bg-gray-600 hover:bg-gray-500 py-2 rounded-md mb-4 transition-colors">Dodaj kolejne ćwiczenie</button>
+                    <button id="save-template-btn" class="w-full bg-green-600 hover:bg-green-500 text-white font-bold py-3 rounded-lg transition-colors">Zapisz Nowy Szablon</button>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Widok Dnia -->
+        <div id="day-view" class="hidden fade-in">
+            <div class="bg-gray-800 rounded-lg shadow-lg p-6">
+                <div class="flex items-center mb-6">
+                    <button id="back-to-calendar" class="p-2 rounded-full bg-gray-700 hover:bg-cyan-500 transition-colors duration-300 mr-4">
+                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+                    </button>
+                    <h2 id="day-view-date" class="text-2xl font-semibold"></h2>
+                </div>
+
+                <div id="add-exercise-form" class="bg-gray-700 p-4 rounded-lg mb-6">
+                    <h3 class="text-xl font-semibold mb-4">Dodaj nowe ćwiczenie</h3>
+                    <input type="text" id="exercise-name" placeholder="Nazwa ćwiczenia (np. Pompki)" class="w-full bg-gray-800 border border-gray-600 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-cyan-400 mb-4">
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                        <div id="reps-input-container" class="hidden">
+                            <label for="reps-input" class="block text-sm font-medium text-gray-300 mb-1">Powtórzenia</label>
+                            <input type="number" id="reps-input" class="w-full bg-gray-800 border border-gray-600 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-cyan-400" placeholder="np. 12">
+                        </div>
+                         <div id="sets-input-container" class="hidden">
+                             <label for="sets-input" class="block text-sm font-medium text-gray-300 mb-1">Serie</label>
+                            <input type="number" id="sets-input" class="w-full bg-gray-800 border border-gray-600 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-cyan-400" placeholder="np. 3">
+                        </div>
+                         <div id="km-input-container" class="hidden">
+                             <label for="km-input" class="block text-sm font-medium text-gray-300 mb-1">Dystans (km)</label>
+                            <input type="number" id="km-input" step="0.1" class="w-full bg-gray-800 border border-gray-600 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-cyan-400" placeholder="np. 5.5">
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap gap-2 justify-center mb-4">
+                        <button id="add-reps-btn" class="bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-2 px-4 rounded-lg transition-colors">Dodaj Powtórzenia</button>
+                        <button id="add-sets-btn" class="bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-2 px-4 rounded-lg transition-colors">Dodaj Serie</button>
+                        <button id="add-km-btn" class="bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-2 px-4 rounded-lg transition-colors">Dodaj Dystans</button>
+                    </div>
+
+                    <button id="save-exercise" class="w-full bg-green-600 hover:bg-green-500 text-white font-bold py-3 px-4 rounded-lg transition-colors text-lg">Zapisz ćwiczenie</button>
+                </div>
+                
+                <div id="exercise-list" class="space-y-3 mb-6"></div>
+
+                <div class="flex justify-center my-4">
+                    <button id="save-day-as-template-btn" class="bg-purple-600 hover:bg-purple-500 text-white font-bold py-2 px-4 rounded-lg transition-colors">
+                        Zapisz jako szablon
+                    </button>
+                </div>
+
+                <div id="notes-section" class="mb-6">
+                    <h3 class="text-xl font-semibold mb-3 text-gray-200">Notatki na dziś</h3>
+                    <div class="bg-gray-700 p-4 rounded-lg">
+                        <textarea id="day-note" class="w-full bg-gray-800 border border-gray-600 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-cyan-400 h-24 resize-y" placeholder="Zapisz swoje uwagi, samopoczucie, dietę..."></textarea>
+                        <div class="flex justify-end mt-2">
+                            <button id="save-note-btn" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded-lg transition-colors">Zapisz notatkę</button>
+                            <span id="note-saved-feedback" class="text-green-400 ml-4 hidden items-center">Zapisano!</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
