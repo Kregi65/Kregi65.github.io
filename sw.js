@@ -1,15 +1,33 @@
-// Nazwa pamięci podręcznej (cache)
-const CACHE_NAME = 'notatnik-treningowy-cache-v1';
+// ZMIANA: Zmieniliśmy nazwę cache z v1 na v2, aby wymusić aktualizację
+const CACHE_NAME = 'notatnik-treningowy-cache-v2';
 
-// Lista plików do zapisania w pamięci podręcznej
+// Lista plików do zapisania w pamięci podręcznej, w tym nowa ikona
 const urlsToCache = [
   '/',
   '/index.html',
   '/css/style.css',
-  '/js/app.js'
+  '/js/app.js',
+  '/manifest.json',
+  '/images/icon.png' // DODANO: Ścieżka do Twojej ikony
 ];
 
-// Instalacja Service Workera i zapisanie plików w cache
+// Usunięcie starych wersji cache podczas aktywacji nowego Service Workera
+self.addEventListener('activate', event => {
+  const cacheWhitelist = [CACHE_NAME];
+  event.waitUntil(
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames.map(cacheName => {
+          if (cacheWhitelist.indexOf(cacheName) === -1) {
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    })
+  );
+});
+
+// Instalacja Service Workera i zapisanie plików w nowym cache
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
