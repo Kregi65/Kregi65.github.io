@@ -3,18 +3,28 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- KONFIGURACJA FIREBASE ---
     // WAŻNE: Wklej tutaj swoją konfigurację Firebase!
     const firebaseConfig = {
-        apiKey: "TWOJ_KLUCZ_API",
-        authDomain: "TWOJA_DOMENA.firebaseapp.com",
-        projectId: "TWOJ_ID_PROJEKTU",
-        storageBucket: "TWOJ_BUCKET.appspot.com",
-        messagingSenderId: "TWOJ_ID_NADAWCY",
-        appId: "TWOJ_ID_APLIKACJI"
+        apiKey: "AIzaSyBdMBapaa3ddbBEa5u1X2elfGzbvvE6Ub0",
+        authDomain: "notatnik-treningowy-d272a.firebaseapp.com",
+        projectId: "notatnik-treningowy-d272a",
+        storageBucket: "notatnik-treningowy-d272a.firebasestorage.app",
+        messagingSenderId: "624530662988",
+        appId: "1:624530662988:web:77d1114564054ba9ff76e9"
     };
 
     // Inicjalizacja Firebase
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.firestore();
+// WŁĄCZENIE TRYBU OFFLINE
+db.enablePersistence().catch(err => {
+    if (err.code == 'failed-precondition') {
+        // Prawdopodobnie otwartych jest wiele kart
+        console.warn('Persistence failed, probably multiple tabs open');
+    } else if (err.code == 'unimplemented') {
+        // Przeglądarka nie wspiera tej funkcji
+        console.warn('Persistence is not available in this browser');
+    }
+});
     let user = null;
     let userDataRef = null;
 
@@ -118,11 +128,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- LOGIKA AUTENTYKACJI ---
     const provider = new firebase.auth.GoogleAuthProvider();
     loginBtn.addEventListener('click', () => {
-        // ZMIANA: Użycie signInWithRedirect zamiast signInWithPopup
-        auth.signInWithRedirect(provider).catch(error => {
-            console.error("Błąd logowania:", error);
-            alert("Logowanie nie powiodło się.");
-        });
+        auth.signInWithPopup(provider)
+            .then(() => {
+                window.location.reload();
+            })
+            .catch(error => {
+                console.error("Błąd logowania:", error);
+                alert("Logowanie nie powiodło się.");
+            });
     });
 
     function signOut() {
@@ -235,9 +248,6 @@ document.addEventListener('DOMContentLoaded', () => {
             calendarGrid.appendChild(dayCell);
         }
     };
-    
-    // ... (reszta funkcji bez zmian, ale z saveData() zamiast saveWorkouts/saveTemplates)
-    // Poniżej wklejone są wszystkie pozostałe funkcje z poprawnym wywołaniem saveData()
     
     const renderDayView = () => {
         const dateKey = formatDateKey(selectedDate);
